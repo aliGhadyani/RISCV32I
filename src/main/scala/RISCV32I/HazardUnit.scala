@@ -5,6 +5,6 @@ import chisel3.util._
 
 class HazardUnit extends Module {
     val io = IO(new Bundle{
-
+        
     })
 }
