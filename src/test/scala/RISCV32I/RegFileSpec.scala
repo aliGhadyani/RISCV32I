@@ -2,7 +2,6 @@ package RISCV32I
 
 import chisel3._
 import chisel3.tester._
-import chisel3.iotesters.PeekPokeTester
 import org.scalatest._
 import scala.util.Random
 
@@ -10,7 +9,7 @@ class RegFileSpec extends FreeSpec with ChiselScalatestTester {
     var operand1 = (Random.nextInt(200))
     var operand2 = (Random.nextInt(200))
     "RegFile should provide proper result in sequence of data input and output" in {
-        test(new RegFile(adressWidth = 5, blockWidth = 32)) { dut =>
+        test(new RegFile(blockNumber = 32, blockWidth = 32)) { dut =>
             dut.io.wr_en.poke(true.B)
             dut.io.write_adr.poke(1.U)
             dut.io.data_in.poke(29.U)

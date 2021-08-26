@@ -1,8 +1,7 @@
 package RISCV32I
 
 import chisel3._
-import chisel3.util._
-import scala.annotation.switch
+import chisel3.util._ 
 
 class RegFile(blockNumber: Int, blockWidth: Int) extends Module {
     val io = IO(new Bundle{
@@ -10,11 +9,11 @@ class RegFile(blockNumber: Int, blockWidth: Int) extends Module {
         val wr_en = Input(Bool())
 
         // read adresses input
-        val read_adr1 = Input(UInt(log2ciel(blockNumber).W))
-        val read_adr2 = Input(UInt(log2ciel(blockNumber).W))
+        val read_adr1 = Input(UInt(log2Ceil(blockNumber).W))
+        val read_adr2 = Input(UInt(log2Ceil(blockNumber).W))
 
         // write adress input
-        val write_adr = Input(UInt(log2ciel(blockNumber).W))
+        val write_adr = Input(UInt(log2Ceil(blockNumber).W))
 
         // write data input
         val data_in = Input(UInt(blockWidth.W))
