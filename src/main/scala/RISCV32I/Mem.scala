@@ -4,7 +4,7 @@ import chisel3._
 import chisel3.util._ 
 
 class Mem(memSize: Int, memBlockWidth: Int) extends Module {
-    val io = IO(new Bundle{
+    val io = IO(new Bundle {
         val in_adr = Input(UInt(log2Ceil(memSize).W))
         val in_data = Input(UInt(memBlockWidth.W))
         val in_wr_en = Input(Bool())

@@ -4,7 +4,7 @@ import chisel3._
 import chisel3.util._
 
 class ALU(dataWidth: Int) extends Module {
-    val io = IO(new Bundle{
+    val io = IO(new Bundle {
         val in_A = Input(SInt(dataWidth.W))
         val in_B = Input(SInt(dataWidth.W))
         val in_op = Input(UInt(3.W))
