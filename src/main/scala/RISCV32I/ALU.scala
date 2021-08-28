@@ -3,12 +3,12 @@ package RISCV32I
 import chisel3._
 import chisel3.util._
 
-class ALU(dataWidth: Int) extends Module {
+class ALU(data_width: Int) extends Module {
     val io = IO(new Bundle {
-        val in_A = Input(SInt(dataWidth.W))
-        val in_B = Input(SInt(dataWidth.W))
+        val in_A = Input(SInt(data_width.W))
+        val in_B = Input(SInt(data_width.W))
         val in_op = Input(UInt(3.W))
-        val out_res1 = Output(SInt(dataWidth.W))
+        val out_res1 = Output(SInt(data_width.W))
     })
 
     io.out_res1 := 0.S
