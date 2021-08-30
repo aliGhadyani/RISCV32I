@@ -5,7 +5,7 @@ import chisel3.tester._
 import org.scalatest._
 
 class IDEXSpec extends FreeSpec with ChiselScalatestTester {
-    "IF/ID register should work properly" in {
+    "ID/EX register should work properly" in {
         test(new IDEX) { dut =>
             dut.io.in_pause.poke(false.B)
             dut.io.in_func3.poke(1.U)
@@ -40,8 +40,7 @@ class IDEXSpec extends FreeSpec with ChiselScalatestTester {
             dut.io.out_RD.expect(0.U)
             dut.io.out_Rs1.expect(0.U)
             dut.io.out_Rs2.expect(0.U)
+        }    
 
-
-        
     }
 }
