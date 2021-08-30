@@ -6,7 +6,7 @@ import org.scalatest._
 
 class RegFileSpec extends FreeSpec with ChiselScalatestTester {
     "RegFile should provide proper result in sequence of data input and output" in {
-        test(new RegFile(blockNumber = 32, blockWidth = 32)) { dut =>
+        test(new RegFile) { dut =>
             dut.io.wr_en.poke(true.B)
             dut.io.write_adr.poke(1.U)
             dut.io.data_in.poke(29.U)
