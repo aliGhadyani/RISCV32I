@@ -21,22 +21,22 @@ class ALU(data_width: Int) extends Module {
             }
         }
         is(1.U) { 
-            io.out_res  := io.in_A << io.in_B.asUInt()
+            io.out_res  := (io.in_A << io.in_B(18, 0).asUInt()).asSInt()
         }
         is(2.U) { 
-            io.out_res  := (io.in_A < io.in_B) 
+            io.out_res  := (io.in_A < io.in_B).asSInt()
         }
         is(3.U) { 
-            io.out_res  := io.in_A.asUInt() < io.in_B.asUInt()
+            io.out_res  := (io.in_A.asUInt() < io.in_B.asUInt()).asSInt()
         }
         is(4.U) { 
             io.out_res  := io.in_A ^ io.in_B 
         }
         is(5.U) {
             when(io.in_op2) {
-                io.out_res  := io.in_A >> io.in_B.asUInt()
+                io.out_res  := (io.in_A >> io.in_B.asUInt()).asSInt()
             } .otherwise {
-                io.out_res  := io.in_A.asUInt() >> io.in_B.asUInt()
+                io.out_res  := (io.in_A.asUInt() >> io.in_B.asUInt()).asSInt()
             }
         }
         is(6.U) { 

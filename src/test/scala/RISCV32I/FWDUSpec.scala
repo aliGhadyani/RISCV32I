@@ -5,7 +5,7 @@ import chisel3.tester._
 import org.scalatest._
 import scala.util.Random
 
-class FWDUSpec extends FreeSpec with ChiselScalatestTester {
+/* class FWDUSpec extends FreeSpec with ChiselScalatestTester {
     "Forwarding Unit should provide proper functionality" in {
         test(new ForwardingUnit) { dut =>
             dut.io.M_reg_wr.poke(false.B)
@@ -54,4 +54,4 @@ class FWDUSpec extends FreeSpec with ChiselScalatestTester {
             dut.io.slc_B.expect(1.U)
         }
     }
-}
+} */

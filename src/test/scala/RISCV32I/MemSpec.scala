@@ -4,7 +4,7 @@ import chisel3._
 import chisel3.tester._
 import org.scalatest._
 
-class MemSpec extends FreeSpec with ChiselScalatestTester {
+/* class MemSpec extends FreeSpec with ChiselScalatestTester {
     val a = 32.U
     "Mem should provid proper functionality" in {
         test(new Memory(block_number = 1024)) { dut =>
@@ -18,4 +18,4 @@ class MemSpec extends FreeSpec with ChiselScalatestTester {
             println(a.S)
         }
     }
-}
+} */
