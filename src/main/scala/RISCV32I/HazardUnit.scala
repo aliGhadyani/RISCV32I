@@ -5,7 +5,19 @@ import chisel3.util._
 
 class HazardUnit extends Module {
     val io = IO(new Bundle {
-        val pc_src = Input(Bool())
-        val IF_en = Output(Bool())
+        val in_branch   = Input(Bool())
+        val in_jump     = Input(Bool())
+        val out_stall   = Output(Bool())
+        val out_kill    = Output(Bool())
     })
+    when(io.in_branch) {
+        io.out_kill := true.B
+        io.out_stall:= true.B
+    } .elsewhen(io.in_jump) {
+        io.out_kill := false.B
+        io.out_stall:= true.B
+    } .otherwise {
+        io.out_kill := false.B
+        io.out_stall:= false.B
+    }
 }
