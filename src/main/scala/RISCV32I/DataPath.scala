@@ -32,6 +32,16 @@ class DataPath(dataWidth: Int) extends Module {
                             Array(0.U -> idex.io.out_B,
                                   1.U -> m_d,
                                   2.U -> mwb.io.out_data))
+    val id_imm  = MuxLookup(io.in_ctrl.slc_imm, 0.U,
+                            Array(0.U -> Cat(ifid.io.out_inst(31, 12), 0.U(12.W)),
+                                  1.U -> Cat(Fill(20, ifid.io.out_inst(31)), ifid.io.out_inst(31, 20)),
+                                  2.U -> Cat(Fill(20, "b0".U), ifid.io.out_inst(31, 20)),
+                                  3.U -> Cat(Fill(21, ifid.io.out_inst(31)), ifid.io.out_inst(7),
+                                             ifid.io.out_inst(30, 25), ifid.io.out_inst(11, 8)),
+                                  4.U -> Cat(Fill(20, ifid.io.out_inst(31)), ifid.io.out_inst(31, 25),
+                                             ifid.io.out_inst(11, 7)),
+                                  5.U -> Cat(Fill(12, ifid.io.out_inst(31)), ifid.io.out_inst(19, 12),
+                                             ifid.io.out_inst(20), ifid.io.out_inst(30, 21)) ))
     // IF stage
     im.io.in_adr    := pcr.io.out_pc
     ifid.io.in_inst := im.io.out_w

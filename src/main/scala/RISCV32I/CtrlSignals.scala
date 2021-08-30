@@ -20,7 +20,7 @@ object WBSig extends Bundle {
 
 object Ctrl extends Bundle {
     val jump    = Bool()
-    val imm_slc = UInt(2.W)
+    val imm_slc = UInt(3.W)
     val f4      = UInt(2.W)
     val M       = MSig
     val EX      = EXSig
