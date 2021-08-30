@@ -6,13 +6,7 @@ import chisel3.util._
 class DataPath(dataWidth: Int) extends Module {
     val io = IO(new Bundle{
         val in_pause    = Input(Bool())
-        val in_kill     = Input(Bool())
-        val in_stall    = Input(Bool())
-        val in_jump     = Input(Bool())
-        val in_f4       = Input(UInt(2.W))
-        val in_M        = Input(MSig)
-        val in_EX       = Input(EXSig)
-        val in_WB       = Input(WBSig)
+        val in_ctrl     = Input(Ctrl)
     })
 
     val im  = Module(new Memory(bytes = 1024))              // instruction memory
@@ -21,21 +15,23 @@ class DataPath(dataWidth: Int) extends Module {
     val rf  = Module(new RegFile())                         // Registeer File
     val idex= Module(new IDEX())                            // ID/EX register
     val alu = Module(new ALU(data_width = dataWidth))       // ALU
+    val bu  = Module(new BranchUnit())                      // branch unit
     val fu  = Module(new ForwardingUnit())                  // forwarding unit
     val exm = Module(new EXM())                             // EX/M register
     val mem = Module(new Memory(bytes = 1024))              // data memory
     val mwb = Module(new MWB())                             // M/WB register
-    val wb_d= Mux(mwb.io.out_WB.d_slc, mwb.io.out_alu_res   // Mux for select RF data input
-                                     , mwb.io.out_mem_out)
-    val ex_a = MuxLookup(fu.io.slc_A, 0.U,                  // Mux for select forwarded data
+    val m_d = MuxLookup(exm.io.out_M.slc_dst, 0.U,          // Mux for select RF data in
+                            Array(0.U -> mem.io.out_w,
+                                  1.U -> exm.io.out_alu_res,
+                                  2.U -> exm.io.out_Rs2_val))
+    val ex_a= MuxLookup(fu.io.out_slc_A, 0.U,               // Mux for select forwarded data
                             Array(0.U -> idex.io.out_A,
-                                  1.U -> exm.io.out_alu_res,
-                                  2.U -> wb_d))
-    val ex_b = MuxLookup(fu.io.slc_B, 0.U,                  // Mux for select forwarded data
+                                  1.U -> m_d,
+                                  2.U -> mwb.io.out_data))
+    val ex_b= MuxLookup(fu.io.out_slc_B, 0.U,               // Mux for select forwarded data
                             Array(0.U -> idex.io.out_B,
-                                  1.U -> exm.io.out_alu_res,
-                                  2.U -> wb_d))
-
+                                  1.U -> m_d,
+                                  2.U -> mwb.io.out_data))
     // IF stage
     im.io.in_adr    := pcr.io.out_pc
     ifid.io.in_inst := im.io.out_w
@@ -52,15 +48,31 @@ class DataPath(dataWidth: Int) extends Module {
     idex.io.in_Rs1  := ifid.io.out_inst(24, 20)
     idex.io.in_Rd   := ifid.io.out_inst(11, 7)
     idex.io.in_func3:= ifid.io.out_inst(14, 12)
-    idex.io.in_f4   := io.in_f4
+    idex.io.in_f4   := io.in_ctrl.f4
 
     // EX stage
     alu.io.in_op2   := idex.io.out_f4(0)
     alu.io.in_op    := idex.io.out_func3
     alu.io.in_A     := MuxLookup(idex.io.out_EX.slc_A, 0.U,
-                            Array(0.U -> ex_a))
+                                Array(0.U -> ex_a,
+                                      1.U -> idex.io.out_pc,
+                                      2.U -> 0.U))
     alu.io.in_B     := MuxLookup(idex.io.out_EX.slc_B, 0.U,
-                            Array(0.U -> ex_b))
+                                Array(0.U -> ex_b,
+                                      1.U -> idex.io.out_I,
+                                      2.U -> 0.U))
+
+    bu.io.in_enable := io.in_ctrl.f4(1)
+    bu.io.in_A      := ex_a
+    bu.io.in_B      := ex_b
+    bu.io.in_func3  := idex.io.out_func3
+
+    fu.io.in_M_reg_wr   := exm.io.out_WB.wr_en
+    fu.io.in_M_reg_dst  := exm.io.out_Rd
+    fu.io.in_WB_reg_wr  := mwb.io.out_WB.wr_en
+    fu.io.in_WB_reg_dst := mwb.io.out_Rd
+    fu.io.in_EX_A_adr   := idex.io.out_Rs1
+    fu.io.in_EX_B_adr   := idex.io.out_Rs2
 
     exm.io.in_alu_res   := alu.io.out_res.asUInt()
     exm.io.in_Rs2_val   := ex_b
@@ -72,12 +84,11 @@ class DataPath(dataWidth: Int) extends Module {
     mem.io.in_func  := exm.io.out_func
     mem.io.in_M     := exm.io.out_M
 
-    mwb.io.in_mem_out   := mem.io.out_w
-    mwb.io.in_alu_res   := exm.io.out_alu_res
-    mwb.io.in_Rd        := exm.io.out_Rd
-    mwb.io.in_WB        := exm.io.out_WB
+    mwb.io.in_data  := m_d
+    mwb.io.in_Rd    := exm.io.out_Rd
+    mwb.io.in_WB    := exm.io.out_WB
 
     // WB stage
-    rf.io.data_in   := wb_d
+    rf.io.data_in   := mwb.io.out_data
     rf.io.wr_en     := mwb.io.out_WB.wr_en
 }

@@ -11,9 +11,19 @@ object EXSig extends Bundle {
 
 object MSig extends Bundle {
     val wr_en = Bool()
+    val slc_dst = UInt(2.W)
 }
 
 object WBSig extends Bundle {
     val wr_en = Bool()
-    val d_slc = Bool()
 }
+
+object Ctrl extends Bundle {
+    val jump    = Bool()
+    val imm_slc = UInt(2.W)
+    val f4      = UInt(2.W)
+    val M       = MSig
+    val EX      = EXSig
+    val WB      = WBSig
+}
+        
