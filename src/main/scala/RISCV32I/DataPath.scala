@@ -32,6 +32,7 @@ class DataPath(dataWidth: Int) extends Module {
                             Array(0.U -> idex.io.out_B,
                                   1.U -> m_d,
                                   2.U -> mwb.io.out_data))
+    val id_imm  = MuxLookup(io.in_ctrl.slc_imm)
     // IF stage
     im.io.in_adr    := pcr.io.out_pc
     ifid.io.in_inst := im.io.out_w
