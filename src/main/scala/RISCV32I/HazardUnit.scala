@@ -10,11 +10,8 @@ class HazardUnit extends Module {
         val out_stall   = Output(Bool())
         val out_kill    = Output(Bool())
     })
-    when(io.in_branch) {
+    when(io.in_branch | io.in_jump) {
         io.out_kill := true.B
-        io.out_stall:= true.B
-    } .elsewhen(io.in_jump) {
-        io.out_kill := false.B
         io.out_stall:= true.B
     } .otherwise {
         io.out_kill := false.B
