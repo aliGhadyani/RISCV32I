@@ -10,8 +10,7 @@ class CtrlUnit(instructionWidth: Int, functionWidth: Int) extends Module {
         val out_ctrl= Output(Ctrl)
     })
     
-    io.out_ctrl.func3   := io.in_inst(14, 12)
-    io.out_ctrl.pc_rori := false.B
+    io.out_ctrl.pc_rori         := false.B
     io.out_ctrl.b_enable        := false.B
     io.out_ctrl.slc_imm         := 0.U
     io.out_ctrl.jump            := false.B
