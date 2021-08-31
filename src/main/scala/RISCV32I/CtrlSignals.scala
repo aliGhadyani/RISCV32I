@@ -18,6 +18,20 @@ object WBSig extends Bundle {
     val wr_en = Bool()
 }
 
+object initSig {
+    val m_sig = new MSig()
+    m_sig.wr_en = false.B
+    m_sig.slc_dst = 0.U
+
+    val wb_sig = new WBSig()
+    wb_sig.wr_en = false.B
+
+    val ex_sig = new EXSig()
+    ex_sig.slc_A = 0.U
+    ex_sig.slc_B = 0.U
+    ex_sig.slc_dst = 0.U
+}
+
 object Ctrl extends Bundle {
     val jump    = Bool()
     val slc_imm = UInt(3.W)
