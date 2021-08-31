@@ -13,10 +13,10 @@ import org.scalatest._
             dut.io.in_alu_res.poke(2.U)
             dut.io.in_Rs2_val.poke(3.U)
             dut.io.in_Rd.poke(4.U)
-            dut.io.out_func3.poke(0.U)
-            dut.io.out_alu_res.poke(0.U)
-            dut.io.out_Rs2_val.poke(0.U)
-            dut.io.out_Rd.poke(0.U)
+            dut.io.out_func3.expect(0.U)
+            dut.io.out_alu_res.expect(0.U)
+            dut.io.out_Rs2_val.expect(0.U)
+            dut.io.out_Rd.expect(0.U)
 
             dut.clock.step(1)
 
@@ -25,10 +25,10 @@ import org.scalatest._
             dut.io.in_alu_res.poke(2.U)
             dut.io.in_Rs2_val.poke(3.U)
             dut.io.in_Rd.poke(4.U)
-            dut.io.out_func3.poke(1.U)
-            dut.io.out_alu_res.poke(2.U)
-            dut.io.out_Rs2_val.poke(3.U)
-            dut.io.out_Rd.poke(4.U)
+            dut.io.out_func3.expect(1.U)
+            dut.io.out_alu_res.expect(2.U)
+            dut.io.out_Rs2_val.expect(3.U)
+            dut.io.out_Rd.expect(4.U)
 
             dut.clock.step(1)
 
@@ -37,10 +37,10 @@ import org.scalatest._
             dut.io.in_alu_res.poke(12.U)
             dut.io.in_Rs2_val.poke(13.U)
             dut.io.in_Rd.poke(14.U)
-            dut.io.out_func3.poke(1.U)
-            dut.io.out_alu_res.poke(2.U)
-            dut.io.out_Rs2_val.poke(3.U)
-            dut.io.out_Rd.poke(4.U)
+            dut.io.out_func3.expect(1.U)
+            dut.io.out_alu_res.expect(2.U)
+            dut.io.out_Rs2_val.expect(3.U)
+            dut.io.out_Rd.expect(4.U)
 
             dut.clock.step(1)
 
@@ -49,10 +49,10 @@ import org.scalatest._
             dut.io.in_alu_res.poke(12.U)
             dut.io.in_Rs2_val.poke(13.U)
             dut.io.in_Rd.poke(14.U)
-            dut.io.out_func3.poke(3.U)
-            dut.io.out_alu_res.poke(12.U)
-            dut.io.out_Rs2_val.poke(13.U)
-            dut.io.out_Rd.poke(14.U)
+            dut.io.out_func3.expect(3.U)
+            dut.io.out_alu_res.expect(12.U)
+            dut.io.out_Rs2_val.expect(13.U)
+            dut.io.out_Rd.expect(14.U)
 
 
         }
