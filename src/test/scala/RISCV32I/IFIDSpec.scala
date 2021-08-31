@@ -4,7 +4,7 @@ import chisel3._
 import chisel3.tester._
 import org.scalatest._
 
-/* class IFIDSpec extends FreeSpec with ChiselScalatestTester {
+ class IFIDSpec extends FreeSpec with ChiselScalatestTester {
     "IF/ID register should work properly" in {
         test(new IFID) { dut =>
             dut.io.in_kill.poke(true.B) 
@@ -34,4 +34,4 @@ import org.scalatest._
     }
 
 }
- */
+ 
