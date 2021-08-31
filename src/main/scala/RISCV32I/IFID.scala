@@ -39,3 +39,4 @@ class  IFID extends Module {
     }
     
 }
+// problem: out_inst and out_pc  always =0 ?
