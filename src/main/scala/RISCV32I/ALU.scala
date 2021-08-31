@@ -12,6 +12,8 @@ class ALU(data_width: Int) extends Module {
         val out_res = Output(SInt(data_width.W))
     })
 
+    io.out_res := 0.S
+
     switch(io.in_op) {
         is(0.U) { 
             when(io.in_op2) {
@@ -21,22 +23,30 @@ class ALU(data_width: Int) extends Module {
             }
         }
         is(1.U) { 
-            io.out_res  := (io.in_A << io.in_B(18, 0).asUInt()).asSInt()
+            io.out_res  := (io.in_A << io.in_B(4, 0)).asSInt()
         }
         is(2.U) { 
-            io.out_res  := (io.in_A < io.in_B).asSInt()
+            when(io.in_A < io.in_B) {
+                io.out_res  := 1.S 
+            } .otherwise {
+                io.out_res  := 0.S
+            }
         }
         is(3.U) { 
-            io.out_res  := (io.in_A.asUInt() < io.in_B.asUInt()).asSInt()
+            when(io.in_A.asUInt() < io.in_B.asUInt()) {
+                io.out_res  := 1.S 
+            } .otherwise {
+                io.out_res  := 0.S
+            }
         }
         is(4.U) { 
             io.out_res  := io.in_A ^ io.in_B 
         }
         is(5.U) {
             when(io.in_op2) {
-                io.out_res  := (io.in_A >> io.in_B.asUInt()).asSInt()
+                io.out_res  := Cat(io.in_A(31), io.in_A >> io.in_B(4, 0)).asSInt()
             } .otherwise {
-                io.out_res  := (io.in_A.asUInt() >> io.in_B.asUInt()).asSInt()
+                io.out_res  := Cat("b0".U, io.in_A.asUInt() >> io.in_B(4, 0)).asSInt()
             }
         }
         is(6.U) { 
