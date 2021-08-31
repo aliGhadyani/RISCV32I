@@ -10,7 +10,7 @@ class Memory(bytes: Int) extends Module {
         val in_adr  = Input(UInt(32.W))
         val in_w    = Input(UInt(32.W))
         val in_d    = Input(UInt(32.W))
-        val in_M    = Input(MSig)
+        val in_M    = Input(new MSig())
         val out_w   = Output(UInt(32.W))
         val out_d   = Output(UInt(32.W))
     })

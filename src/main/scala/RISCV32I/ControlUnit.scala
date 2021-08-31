@@ -7,7 +7,7 @@ import scala.annotation.switch
 class CtrlUnit(instructionWidth: Int, functionWidth: Int) extends Module {
     val io = IO(new Bundle{
         val in_inst = Input(UInt(instructionWidth.W))
-        val out_ctrl= Output(Ctrl)
+        val out_ctrl= Output(new Ctrl())
     })
     
     io.out_ctrl.pc_rori         := false.B
@@ -15,7 +15,7 @@ class CtrlUnit(instructionWidth: Int, functionWidth: Int) extends Module {
     io.out_ctrl.slc_imm         := 0.U
     io.out_ctrl.jump            := false.B
     io.out_ctrl.sig_M.wr_en     := false.B
-    io.out_ctrl.sig_M.sld_d     := 1.U
+    io.out_ctrl.sig_M.slc_d     := 1.U
     io.out_ctrl.sig_WB.wr_en    := false.B
     io.out_ctrl.sig_EX.slc_A    := 0.U
     io.out_ctrl.sig_EX.slc_B    := 0.U
@@ -29,7 +29,7 @@ class CtrlUnit(instructionWidth: Int, functionWidth: Int) extends Module {
             io.out_ctrl.jump            := false.B
 
             io.out_ctrl.sig_M.wr_en     := false.B
-            io.out_ctrl.sig_M.sld_d     := 1.U
+            io.out_ctrl.sig_M.slc_d     := 1.U
 
             io.out_ctrl.sig_WB.wr_en    := true.B
 
@@ -44,7 +44,7 @@ class CtrlUnit(instructionWidth: Int, functionWidth: Int) extends Module {
             io.out_ctrl.jump            := false.B
 
             io.out_ctrl.sig_M.wr_en     := false.B
-            io.out_ctrl.sig_M.sld_d     := 1.U
+            io.out_ctrl.sig_M.slc_d     := 1.U
 
             io.out_ctrl.sig_WB.wr_en    := true.B
 
@@ -59,7 +59,7 @@ class CtrlUnit(instructionWidth: Int, functionWidth: Int) extends Module {
             io.out_ctrl.jump            := true.B
 
             io.out_ctrl.sig_M.wr_en     := false.B
-            io.out_ctrl.sig_M.sld_d     := 0.U
+            io.out_ctrl.sig_M.slc_d     := 0.U
 
             io.out_ctrl.sig_WB.wr_en    := true.B
 
@@ -72,10 +72,10 @@ class CtrlUnit(instructionWidth: Int, functionWidth: Int) extends Module {
             io.out_ctrl.b_enable        := false.B
             io.out_ctrl.slc_imm         := 0.U
             io.out_ctrl.jump            := true.B
-            io.out_ctrl.pc_iorr         := true.B
+            io.out_ctrl.pc_rori         := true.B
 
             io.out_ctrl.sig_M.wr_en     := false.B
-            io.out_ctrl.sig_M.sld_d     := 0.U
+            io.out_ctrl.sig_M.slc_d     := 0.U
 
             io.out_ctrl.sig_WB.wr_en    := false.B
 
@@ -90,7 +90,7 @@ class CtrlUnit(instructionWidth: Int, functionWidth: Int) extends Module {
             io.out_ctrl.jump            := false.B
 
             io.out_ctrl.sig_M.wr_en     := false.B
-            io.out_ctrl.sig_M.sld_d     := 1.U
+            io.out_ctrl.sig_M.slc_d     := 1.U
 
             io.out_ctrl.sig_WB.wr_en    := false.B
 
@@ -105,7 +105,7 @@ class CtrlUnit(instructionWidth: Int, functionWidth: Int) extends Module {
             io.out_ctrl.jump            := false.B
 
             io.out_ctrl.sig_M.wr_en     := false.B
-            io.out_ctrl.sig_M.sld_d     := 0.U
+            io.out_ctrl.sig_M.slc_d     := 0.U
 
             io.out_ctrl.sig_WB.wr_en    := true.B
 
@@ -120,7 +120,7 @@ class CtrlUnit(instructionWidth: Int, functionWidth: Int) extends Module {
             io.out_ctrl.jump            := false.B
 
             io.out_ctrl.sig_M.wr_en     := true.B
-            io.out_ctrl.sig_M.sld_d     := 0.U
+            io.out_ctrl.sig_M.slc_d     := 0.U
 
             io.out_ctrl.sig_WB.wr_en    := false.B
 
@@ -139,7 +139,7 @@ class CtrlUnit(instructionWidth: Int, functionWidth: Int) extends Module {
             io.out_ctrl.jump            := false.B
 
             io.out_ctrl.sig_M.wr_en     := false.B
-            io.out_ctrl.sig_M.sld_d     := 1.U
+            io.out_ctrl.sig_M.slc_d     := 1.U
 
             io.out_ctrl.sig_WB.wr_en    := true.B
 
@@ -158,7 +158,7 @@ class CtrlUnit(instructionWidth: Int, functionWidth: Int) extends Module {
             io.out_ctrl.jump            := false.B
 
             io.out_ctrl.sig_M.wr_en     := false.B
-            io.out_ctrl.sig_M.sld_d     := 1.U
+            io.out_ctrl.sig_M.slc_d     := 1.U
 
             io.out_ctrl.sig_WB.wr_en    := true.B
 
@@ -177,7 +177,7 @@ class CtrlUnit(instructionWidth: Int, functionWidth: Int) extends Module {
             io.out_ctrl.jump            := false.B
 
             io.out_ctrl.sig_M.wr_en     := false.B
-            io.out_ctrl.sig_M.sld_d     := 0.U
+            io.out_ctrl.sig_M.slc_d     := 0.U
 
             io.out_ctrl.sig_WB.wr_en    := false.B
 
@@ -192,7 +192,7 @@ class CtrlUnit(instructionWidth: Int, functionWidth: Int) extends Module {
             io.out_ctrl.jump            := false.B
 
             io.out_ctrl.sig_M.wr_en     := false.B
-            io.out_ctrl.sig_M.sld_d     := 0.U
+            io.out_ctrl.sig_M.slc_d     := 0.U
 
             io.out_ctrl.sig_WB.wr_en    := false.B
 

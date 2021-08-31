@@ -6,7 +6,7 @@ import chisel3.util._
 class DataPath(dataWidth: Int) extends Module {
     val io = IO(new Bundle{
         val in_pause    = Input(Bool())
-        val in_ctrl     = Input(Ctrl)
+        val in_ctrl     = Input(new Ctrl())
         val in_inst     = Input(UInt(32.W))
         val in_inst_wr  = Input(Bool())
     })
@@ -24,7 +24,7 @@ class DataPath(dataWidth: Int) extends Module {
     val mem = Module(new Memory(bytes = 1024))              // data memory
     val mwb = Module(new MWB())                             // M/WB register
 
-    val m_d       = MuxLookup(exm.io.out_M.slc_dst, 0.U,          // Mux for select RF data in
+    val m_d       = MuxLookup(exm.io.out_M.slc_d, 0.U,          // Mux for select RF data in
                             Array(0.U -> mem.io.out_w,
                                   1.U -> exm.io.out_alu_res,
                                   2.U -> exm.io.out_Rs2_val))
@@ -46,7 +46,7 @@ class DataPath(dataWidth: Int) extends Module {
                                              ifid.io.out_inst(11, 7)),
                                   5.U -> Cat(Fill(12, ifid.io.out_inst(31)), ifid.io.out_inst(19, 12),      // J-type
                                              ifid.io.out_inst(20), ifid.io.out_inst(30, 21)) ))
-    val pc_iorr   = Mux(io.in_ctrl.pc_rori, idex.io.out_I, ex_a)
+    val pc_iorr   = Mux(idex.io.out_ctrl.pc_rori, idex.io.out_I, ex_a)
     val pc_jump   = idex.io.out_pc + pc_iorr
     val npc       = Mux(bu.io.out_branch | io.in_ctrl.jump , pcr.io.out_pc + 4.U, pc_jump)
     // IF stage
@@ -67,22 +67,22 @@ class DataPath(dataWidth: Int) extends Module {
     idex.io.in_Rs1  := ifid.io.out_inst(19, 15)
     idex.io.in_Rs2  := ifid.io.out_inst(24, 20)
     idex.io.in_Rd   := ifid.io.out_inst(11, 7)
-    idex.io.in_func3:= io.in_ctrl.funct3
-    idex.io.in_f4   := io.in_ctrl.f4
+    idex.io.in_func3:= ifid.io.out_inst(14, 12)
+    idex.io.in_ctrl := io.in_ctrl
 
     // EX stage
-    alu.io.in_op2   := idex.io.out_EX.alu_f4
-    alu.io.in_op    := idex.io.out_EX.alu_func
-    alu.io.in_A     := MuxLookup(idex.io.out_EX.slc_A, 0.U,
+    alu.io.in_op2   := idex.io.out_ctrl.sig_EX.alu_f4
+    alu.io.in_op    := idex.io.out_ctrl.sig_EX.alu_func
+    alu.io.in_A     := MuxLookup(idex.io.out_ctrl.sig_EX.slc_A, 0.U,
                                 Array(0.U -> ex_a,
                                       1.U -> idex.io.out_pc,
                                       2.U -> 0.U))
-    alu.io.in_B     := MuxLookup(idex.io.out_EX.slc_B, 0.U,
+    alu.io.in_B     := MuxLookup(idex.io.out_ctrl.sig_EX.slc_B, 0.U,
                                 Array(0.U -> ex_b,
                                       1.U -> idex.io.out_I,
                                       2.U -> 4.U))
 
-    bu.io.in_enable := io.in_ctrl.f4(1)
+    bu.io.in_enable := idex.io.out_ctrl.b_enable
     bu.io.in_A      := ex_a
     bu.io.in_B      := ex_b
     bu.io.in_func3  := idex.io.out_func3
@@ -94,17 +94,18 @@ class DataPath(dataWidth: Int) extends Module {
     fu.io.in_EX_A_adr   := idex.io.out_Rs1
     fu.io.in_EX_B_adr   := idex.io.out_Rs2
 
-    exm.io.in_M         := idex.io.out_M
-    exm.io.in_WB        := idex.io.out_WB
+    exm.io.in_M         := idex.io.out_ctrl.sig_M
+    exm.io.in_WB        := idex.io.out_ctrl.sig_WB
     exm.io.in_alu_res   := alu.io.out_res.asUInt()
     exm.io.in_Rs2_val   := ex_b
     exm.io.in_Rd        := idex.io.out_Rd
+    exm.io.in_func3     := idex.io.out_func3
 
     // M stage
     mem.io.in_adr   := exm.io.out_alu_res
     mem.io.in_w     := exm.io.out_Rs2_val
     mem.io.in_d     := 0.U(32.W)
-    mem.io.in_func  := exm.io.out_func
+    mem.io.in_func  := exm.io.out_func3
     mem.io.in_M     := exm.io.out_M
 
     mwb.io.in_data  := m_d
