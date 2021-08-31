@@ -4,7 +4,7 @@ import chisel3._
 import chisel3.util._
 import scala.annotation.switch
 
-class CtrlUnit(instructionWidth: Int, functionWidth: Int) extends Module {
+class ControlUnit(instructionWidth: Int, functionWidth: Int) extends Module {
     val io = IO(new Bundle{
         val in_inst = Input(UInt(instructionWidth.W))
         val out_ctrl= Output(new Ctrl())
