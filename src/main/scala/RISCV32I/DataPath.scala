@@ -9,6 +9,8 @@ class DataPath(dataWidth: Int) extends Module {
         val in_ctrl     = Input(new Ctrl())
         val in_inst     = Input(UInt(32.W))
         val in_inst_wr  = Input(Bool())
+
+        val out_inst    = Output(UInt(32.W))
     })
 
     val im  = Module(new Memory(bytes = 1024))              // instruction memory
