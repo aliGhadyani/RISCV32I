@@ -46,8 +46,9 @@ class DataPath(dataWidth: Int) extends Module {
                                              ifid.io.out_inst(11, 7)),
                                   5.U -> Cat(Fill(12, ifid.io.out_inst(31)), ifid.io.out_inst(19, 12),      // J-type
                                              ifid.io.out_inst(20), ifid.io.out_inst(30, 21)) ))
-    val pc_pimm   = Mux(bu.io.out_branch, ifid.io.out_pc + id_imm, alu.io.out_res)
-    val npc       = Mux(bu.io.out_branch | (io.in_ctrl.jump & (~bu.io.out_branch)), pcr.io.out_pc + 4.U, pc_pimm)
+    val pc_iorr   = Mux(io.in_ctrl.pc_rori, idex.io.out_I, ex_a)
+    val pc_jump   = idex.io.out_pc + pc_iorr
+    val npc       = Mux(bu.io.out_branch | io.in_ctrl.jump , pcr.io.out_pc + 4.U, pc_jump)
     // IF stage
     pcr.io.in_npc       := npc
     im.io.in_adr        := pcr.io.out_pc
