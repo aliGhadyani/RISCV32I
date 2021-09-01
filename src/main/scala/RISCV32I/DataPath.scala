@@ -3,7 +3,7 @@ package RISCV32I
 import chisel3._
 import chisel3.util._
 
-class DataPath(dataWidth: Int) extends Module {
+class DataPath extends Module {
     val io = IO(new Bundle{
         val in_pause    = Input(Bool())
         val in_ctrl     = Input(new Ctrl())
@@ -14,12 +14,12 @@ class DataPath(dataWidth: Int) extends Module {
     })
 
     val im  = Module(new Memory(bytes = 1024))              // instruction memory
-    val pcr = Module(new PCR(data_width = dataWidth))       // program counter
+    val pcr = Module(new PCR())       // program counter
     val ifid= Module(new IFID())                            // IF/ID register
     val rf  = Module(new RegFile())                         // Registeer File
     val hu  = Module(new HazardUnit())                      // Hazard Unit
     val idex= Module(new IDEX())                            // ID/EX register
-    val alu = Module(new ALU(data_width = dataWidth))       // ALU
+    val alu = Module(new ALU())       // ALU
     val bu  = Module(new BranchUnit())                      // branch unit
     val fu  = Module(new ForwardingUnit())                  // forwarding unit
     val exm = Module(new EXM())                             // EX/M register
@@ -108,7 +108,7 @@ class DataPath(dataWidth: Int) extends Module {
     mem.io.in_w     := exm.io.out_Rs2_val
     mem.io.in_d     := 0.U(32.W)
     mem.io.in_func  := exm.io.out_func3
-    mem.io.in_M     := exm.io.out_M
+    mem.io.in_wr_en := exm.io.out_M.wr_en
 
     mwb.io.in_data  := m_d
     mwb.io.in_Rd    := exm.io.out_Rd

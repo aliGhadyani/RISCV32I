@@ -6,7 +6,7 @@ import scala.annotation.switch
 
 class ControlUnit extends Module {
     val io = IO(new Bundle{
-        val in_inst = Input(UInt(instructionWidth.W))
+        val in_inst = Input(UInt(32.W))
         val out_ctrl= Output(new Ctrl())
     })
     

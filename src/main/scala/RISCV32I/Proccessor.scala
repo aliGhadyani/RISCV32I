@@ -9,7 +9,7 @@ class Proccessor extends Module {
         val in_inst_wr  = Input(Bool())
     })
 
-    val dp  = Module(new DataPath(dataWidth = 32))
+    val dp  = Module(new DataPath())
     val cu  = Module(new ControlUnit())
 
     cu.io.in_inst       := dp.io.out_inst
