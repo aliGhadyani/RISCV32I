@@ -49,7 +49,7 @@ import org.scalatest._
             dut.io.read_adr1.poke(5.U)
             dut.io.read_adr2.poke(1.U)
             println("[test04] - in past clock 7 pushed in reg5")
-            println("[result] - reg5 contains " + dut.io.data_out2.peek().toString())
+            println("[result] - reg5 contains " + dut.io.data_out1.peek().toString())
             dut.io.data_out1.expect(7.U)
             dut.io.data_out2.expect(29.U)
         }
