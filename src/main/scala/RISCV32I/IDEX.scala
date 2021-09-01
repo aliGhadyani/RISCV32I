@@ -27,7 +27,7 @@ class IDEX extends Module {
         val out_Rs2     = Output(UInt(5.W))
     })
 
-    val func3   = RegInit(UInt(3.W))
+    val func3   = RegInit(0.U(3.W))
     val pc      = RegInit(0.U(32.W))
     val a       = RegInit(0.U(32.W))
     val b       = RegInit(0.U(32.W))
