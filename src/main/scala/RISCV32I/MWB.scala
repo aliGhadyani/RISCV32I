@@ -16,8 +16,8 @@ class MWB extends Module {
         val out_Rd      = Output(UInt(5.W))
     })
     val wb_sig  = RegInit(initSig.wb_sig)
-    val data    = RegInit(UInt(32.W))
-    val rd      = RegInit(UInt(32.W))
+    val data    = RegInit(0.U(32.W))
+    val rd      = RegInit(0.U(32.W))
 
     io.out_WB       := wb_sig
     io.out_data     := data
