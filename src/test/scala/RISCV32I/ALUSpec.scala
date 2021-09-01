@@ -9,7 +9,7 @@ class ALUSpec extends FreeSpec with ChiselScalatestTester {
     var operand1 = Random.nextInt(200)
     var operand2 = Random.nextInt(100)
     "ALU should provide proper result regarding the operations and operands" in {
-        test(new ALU(data_width = 32)) { dut =>
+        test(new ALU()) { dut =>
             dut.io.in_A.poke(operand1.S)
             dut.io.in_B.poke(operand2.S)
             dut.io.in_op.poke(0.U)
