@@ -21,12 +21,12 @@ class EXM extends Module {
         val out_Rd      = Input(UInt(5.W))
     })
 
-    val func3   = RegInit(UInt(3.W))
+    val func3   = RegInit(0.U(3.W))
     val m_sig   = RegInit(initSig.m_sig)
     val wb_sig  = RegInit(initSig.wb_sig)
-    val alu_res = RegInit(UInt(32.W))
-    val rs2_val = RegInit(UInt(32.W))
-    val rd      = RegInit(UInt(32.W))
+    val alu_res = RegInit(0.U(32.W))
+    val rs2_val = RegInit(0.U(32.W))
+    val rd      = RegInit(0.U(32.W))
 
     io.out_func3    := func3
     io.out_M        := m_sig
