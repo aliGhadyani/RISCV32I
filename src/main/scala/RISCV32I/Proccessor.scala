@@ -17,13 +17,4 @@ class Proccessor extends Module {
     dp.io.in_inst       := io.in_inst
     dp.io.in_inst_wr    := io.in_inst_wr
     dp.io.in_pause      := io.in_inst_wr
-
-    dp.im.memFile(0.U)    := "b00000000011100000000111110010011".U
-    dp.im.memFile(1.U)    := "b00000000000000000000000000010011".U
-    dp.im.memFile(2.U)    := "b00000000000000000000000000010011".U
-    dp.im.memFile(3.U)    := "b00000000000000000000000000010011".U
-    dp.im.memFile(4.U)    := "b00000000000000000000000000010011".U
-    dp.im.memFile(5.U)    := "b00000000000000000000000000010011".U
-    dp.im.memFile(6.U)    := "b00000000000000000000000000010011".U
-    dp.im.memFile(7.U)    := "b00000000000000000000000000010011".U
 }

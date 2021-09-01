@@ -7,7 +7,7 @@ class IDEX extends Module {
     val io = IO(new Bundle {
         val in_pause= Input(Bool())
         val in_func3= Input(UInt(3.W))
-        val in_ctrl = Input(new Ctrl())
+        val in_ctrl = Input(UInt(18.W))
         val in_pc   = Input(UInt(32.W))
         val in_A    = Input(UInt(32.W))
         val in_B    = Input(UInt(32.W))
@@ -17,7 +17,7 @@ class IDEX extends Module {
         val in_Rs2  = Input(UInt(5.W))
         
         val out_func3   = Output(UInt(3.W))
-        val out_ctrl    = Output(new Ctrl())
+        val out_ctrl    = Output(UInt(18.W))
         val out_pc      = Output(UInt(32.W))
         val out_A       = Output(UInt(32.W))
         val out_B       = Output(UInt(32.W))
@@ -35,7 +35,7 @@ class IDEX extends Module {
     val rd      = RegInit(0.U(5.W))
     val rs1     = RegInit(0.U(5.W))
     val rs2     = RegInit(0.U(5.W))
-    val ctrl    = RegInit(initSig.c)
+    val ctrl    = RegInit(0.U(18.W))
     
     io.out_func3:= func3
     io.out_ctrl := ctrl
