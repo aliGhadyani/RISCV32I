@@ -10,11 +10,15 @@ class Memory(bytes: Int) extends Module {
         val in_adr  = Input(UInt(32.W))
         val in_w    = Input(UInt(32.W))
         val in_d    = Input(UInt(32.W))
-        val in_M    = Input(new MSig())
+        val in_wr_en= Input(Bool())
         val out_w   = Output(UInt(32.W))
         val out_d   = Output(UInt(32.W))
     })
-    val memFile = Mem(bytes, UInt(8.W))
+    val initVec = Seq.fill(bytes) {0.U(8.W)}
+    val memFile = RegInit(VecInit(initVec))
+
+    io.out_w    := 0.U
+    io.out_d    := 0.U
 
     switch(io.in_func){
         is(0.U) {
@@ -57,7 +61,7 @@ class Memory(bytes: Int) extends Module {
         }
     }
 
-    when(io.in_M.wr_en) {
+    when(io.in_wr_en) {
         switch(io.in_func){
             is(0.U) {
                 memFile(io.in_adr)  := io.in_w(7, 0)
