@@ -16,5 +16,5 @@ class Proccessor extends Module {
     dp.io.in_ctrl       := cu.io.out_ctrl
     dp.io.in_inst       := io.in_inst
     dp.io.in_inst_wr    := io.in_inst_wr
-    dp.io.in_pause      := io.in_inst_wr
+    dp.io.in_pause      := false.B
 }

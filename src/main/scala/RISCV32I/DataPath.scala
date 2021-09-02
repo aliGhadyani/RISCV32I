@@ -44,9 +44,11 @@ class DataPath extends Module {
                                   2.U -> Cat(Fill(20, "b0".U), ifid.io.out_inst(31, 20)),                   // I-type unsigned
                                   3.U -> Cat(Fill(21, ifid.io.out_inst(31)), ifid.io.out_inst(7),           // B-type
                                              ifid.io.out_inst(30, 25), ifid.io.out_inst(11, 8)),
-                                  4.U -> Cat(Fill(20, ifid.io.out_inst(31)), ifid.io.out_inst(31, 25),      // S-type
+                                  4.U -> Cat(Fill(21, "b0".U), ifid.io.out_inst(7),                         // B-type unsigned
+                                             ifid.io.out_inst(30, 25), ifid.io.out_inst(11, 8)),
+                                  5.U -> Cat(Fill(20, ifid.io.out_inst(31)), ifid.io.out_inst(31, 25),      // S-type
                                              ifid.io.out_inst(11, 7)),
-                                  5.U -> Cat(Fill(12, ifid.io.out_inst(31)), ifid.io.out_inst(19, 12),      // J-type
+                                  6.U -> Cat(Fill(12, ifid.io.out_inst(31)), ifid.io.out_inst(19, 12),      // J-type
                                              ifid.io.out_inst(20), ifid.io.out_inst(30, 21)) ))
     val pc_iorr   = Mux(idex.io.out_ctrl(0), idex.io.out_I, ex_a)
     val pc_jump   = idex.io.out_pc + pc_iorr
