@@ -13,7 +13,7 @@ class DataPath extends Module {
         val out_inst    = Output(UInt(32.W))
     })
 
-    val im  = Module(new Memory(bytes = 1024))              // instruction memory
+    val im  = Mem(1024, UInt(32.W))                         // instruction memory
     val pcr = Module(new PCR())                             // program counter
     val ifid= Module(new IFID())                            // IF/ID register
     val rf  = Module(new RegFile())                         // Registeer File
@@ -55,14 +55,9 @@ class DataPath extends Module {
     val npc       = Mux(bu.io.out_branch | io.in_ctrl(5) , pcr.io.out_pc + 4.U, pc_jump)
     // IF stage
     pcr.io.in_npc       := npc
-    im.io.in_adr        := pcr.io.out_pc
-    im.io.in_wr_en      := io.in_inst_wr
-    im.io.in_w          := io.in_inst
-    im.io.in_d          := 0.U(32.W)
-    im.io.in_func       := 2.U
 
     ifid.io.in_nop      := "b00000000000000000000000000010011".U
-    ifid.io.in_inst     := im.io.out_w
+    ifid.io.in_inst     := im.read(pcr.io.out_pc(31, 2))
     ifid.io.in_pc       := pcr.io.out_pc
     ifid.io.in_stall    := hu.io.out_stall
     ifid.io.in_kill     := hu.io.out_kill
