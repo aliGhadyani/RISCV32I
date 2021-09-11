@@ -49,16 +49,16 @@ class ControlUnit extends Module {
         }
         is("b0010011".U) {              //OP-IMM
             when((io.in_inst(14, 12) === "b101".U) & (io.in_inst(31, 25) === "b0100000".U)) {
-                io.out_ctrl := Cat("b0_1_0_0_0_0_000_01_00_1".U, inst(14, 12))
+                io.out_ctrl := Cat("b0_1_0_0_0_0_000_01_00_1".U, io.in_inst(14, 12))
             } .otherwise {
-                io.out_ctrl := Cat("b0_1_0_0_0_0_000_01_00_0".U, inst(14, 12))
+                io.out_ctrl := Cat("b0_1_0_0_0_0_000_01_00_0".U, io.in_inst(14, 12))
             }
         }
         is("b0110011".U) {              // OP
             when(((io.in_inst(14, 12) === "b101".U) | (io.in_inst(14, 12) === "b000".U) )& (io.in_inst(31, 25) === "b0100000".U)) {
-                io.out_ctrl := Cat("b0_1_0_0_0_0_000_00_00_1".U, inst(14, 12))
+                io.out_ctrl := Cat("b0_1_0_0_0_0_000_00_00_1".U, io.in_inst(14, 12))
             } .otherwise {
-                io.out_ctrl := Cat("b0_1_0_0_0_0_000_00_00_0".U, inst(14, 12))
+                io.out_ctrl := Cat("b0_1_0_0_0_0_000_00_00_0".U, io.in_inst(14, 12))
             }
         }
         is("b0001111".U) {              // MISC-MEM
