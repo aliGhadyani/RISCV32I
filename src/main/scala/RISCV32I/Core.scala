@@ -2,10 +2,12 @@ package RISCV32I
 
 import chisel3._
 import chisel3.util._
-import chisel3.experimental.loadMemoryFromFile
-import chisel3.experimental.MemoryLoadFileType 
+import chisel3.util.experimental.loadMemoryFromFile
 
 class Core extends Module {
+      val io      = IO(new Bundle{
+            val start   = Input(Bool())
+      })
     
       val pcr     = Module(new PCR())                             // program counter
       val im      = Mem(1024, UInt(32.W))                         // instruction memory
@@ -13,9 +15,9 @@ class Core extends Module {
       val alu     = Module(new ALU())                             // ALU
       val bu      = Module(new BranchUnit())                      // branch unit
       val cu      = Module(new ControlUnit())                     // Control Unit
-      val mem     = Mem(1024, Vec(4, UInt(8.W)))                  // Data Memory
+      val mem     = Module(new Memory(bytes = 1024))                          // Data Memory
 
-      loadMemoryFromFile(im, "C:/Users/Ghadyani/OneDrive/Desktop/im.bin", hexOrBinary = MemoryLoadFileType.Binary)
+      loadMemoryFromFile(im, "C:/Users/Ghadyani/OneDrive/Desktop/im.bin")
       val inst    = Wire(UInt(32.W))
       inst              := im.read(pcr.io.out_pc)
 
@@ -32,22 +34,6 @@ class Core extends Module {
                                     7.U -> 0.U                                                              // default-reserved
                               ))
 
-      when(cu.io.out_ctrl(14)) {
-            switch(inst(14, 12)) {
-                  is("b000".U) { mem.write(alu.io.out_res.asUInt(), rf.io.data_out2, "b0001".U) }     // STORE byte
-                  is("b001".U) { mem.write(alu.io.out_res.asUInt(), rf.io.data_out2, "b0011".U) }     // STORE half-word
-                  is("b010".U) { mem.write(alu.io.out_res.asUInt(), rf.io.data_out2, "b1111".U) }     // STORE word
-            }
-      }
-      val mem_out = MuxLookup(inst(14, 12), 0.U,
-                              Array(
-                                    0.U -> Cat(Fill(24, mem.read(alu.io.out_res.asUInt())(7)), mem.read(alu.io.out_res.asUInt())(7, 0)),        // LOAD byte
-                                    1.U -> Cat(Fill(16, mem.read(alu.io.out_res.asUInt())(15)), mem.read(alu.io.out_res.asUInt())(15, 0)),      // LOAD half-word
-                                    2.U -> mem.read(alu.io.out_res.asUInt()),                                                                   // LOAD word
-                                    4.U -> Cat(Fill(24, "b0".U), mem.read(alu.io.out_res.asUInt())(7, 0)),                                      // LOAD byte unsigned
-                                    5.U -> Cat(Fill(16, "b0".U), mem.read(alu.io.out_res.asUInt())(15, 0))                                      // LOAD half-word unsigned
-                              ))
-
       pcr.io.in_npc     := Mux(((bu.io.out_branch & cu.io.out_ctrl(12)) | cu.io.out_ctrl(11)), 
                                     pcr.io.out_pc + 4.U, imm + Mux(cu.io.out_ctrl(13), pcr.io.out_pc, rf.io.data_out1))
 
@@ -55,7 +41,7 @@ class Core extends Module {
       rf.io.read_adr2   := inst(24, 20)
       rf.io.write_adr   := inst(11, 7)
       rf.io.wr_en       := cu.io.out_ctrl(15)
-      rf.io.data_in     := Mux(cu.io.out_ctrl(16), alu.io.out_res, mem_out)
+      rf.io.data_in     := Mux(cu.io.out_ctrl(16), alu.io.out_res, mem.io.out_w)
 
       alu.io.in_op      := cu.io.out_ctrl(2, 0)
       alu.io.in_op2     := cu.io.out_ctrl(3)
@@ -78,4 +64,10 @@ class Core extends Module {
       bu.io.in_func3    := inst(14, 12)
       bu.io.in_A        := rf.io.data_out1
       bu.io.in_B        := rf.io.data_out2
+
+      mem.io.in_func    := inst(14, 12)
+      mem.io.in_adr     := alu.io.out_res.asUInt()
+      mem.io.in_w       := rf.io.data_out2
+      mem.io.in_d       := 0.U
+      mem.io.in_wr_en   := cu.io.out_ctrl(14)
 }
