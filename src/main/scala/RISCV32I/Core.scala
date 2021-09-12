@@ -2,7 +2,6 @@ package RISCV32I
 
 import chisel3._
 import chisel3.util._
-import chisel3.util.experimental.loadMemoryFromFile
 
 class Core extends Module {
       val io      = IO(new Bundle{
@@ -10,7 +9,7 @@ class Core extends Module {
       })
     
       val pcr     = Module(new PCR())                             // program counter
-      val im      = Module(new Memory(bytes = 1024))              // instruction memory
+      val im      = Module(new InstMem())              // instruction memory
       val rf      = Module(new RegFile())                         // Registeer File
       val alu     = Module(new ALU())                             // ALU
       val bu      = Module(new BranchUnit())                      // branch unit
@@ -18,12 +17,8 @@ class Core extends Module {
       val mem     = Module(new Memory(bytes = 1024))              // Data Memory
 
       im.io.in_adr      := pcr.io.out_pc
-      im.io.in_func     := "b011".U
-      im.io.in_w        := 0.U
-      im.io.in_d        := 0.U
-      im.io.in_wr_en    := false.B
       val inst    = Wire(UInt(32.W))
-      inst              := im.io.out_w
+      inst              := im.io.out_inst
 
       cu.io.in_inst     := inst
 
