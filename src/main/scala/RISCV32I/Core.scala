@@ -36,12 +36,13 @@ class Core extends Module {
 
       pcr.io.in_npc     := Mux(((bu.io.out_branch & cu.io.out_ctrl(12)) | cu.io.out_ctrl(11)), 
                                     pcr.io.out_pc + 4.U, imm + Mux(cu.io.out_ctrl(13), pcr.io.out_pc, rf.io.data_out1))
+      pcr.io.in_pause   := false.B
 
       rf.io.read_adr1   := inst(19, 15)
       rf.io.read_adr2   := inst(24, 20)
       rf.io.write_adr   := inst(11, 7)
       rf.io.wr_en       := cu.io.out_ctrl(15)
-      rf.io.data_in     := Mux(cu.io.out_ctrl(16), alu.io.out_res, mem.io.out_w)
+      rf.io.data_in     := Mux(cu.io.out_ctrl(16), alu.io.out_res.asUInt(), mem.io.out_w)
 
       alu.io.in_op      := cu.io.out_ctrl(2, 0)
       alu.io.in_op2     := cu.io.out_ctrl(3)
@@ -51,19 +52,19 @@ class Core extends Module {
                                           1.U -> pcr.io.out_pc,
                                           2.U -> 0.U,
                                           3.U -> 0.U
-                                    ))
+                                    )).asSInt()
       alu.io.in_B       := MuxLookup(cu.io.out_ctrl(7, 6), 0.U,
                                     Array(
                                           0.U -> rf.io.data_out2,
                                           1.U -> imm,
                                           2.U -> 4.U,
                                           3.U -> 0.U
-                                    ))
+                                    )).asSInt()
 
       bu.io.in_enable   := cu.io.out_ctrl(12)
       bu.io.in_func3    := inst(14, 12)
-      bu.io.in_A        := rf.io.data_out1
-      bu.io.in_B        := rf.io.data_out2
+      bu.io.in_A        := rf.io.data_out1.asSInt()
+      bu.io.in_B        := rf.io.data_out2.asSInt()
 
       mem.io.in_func    := inst(14, 12)
       mem.io.in_adr     := alu.io.out_res.asUInt()
