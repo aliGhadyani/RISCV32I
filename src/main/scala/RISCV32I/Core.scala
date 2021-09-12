@@ -10,16 +10,20 @@ class Core extends Module {
       })
     
       val pcr     = Module(new PCR())                             // program counter
-      val im      = Mem(1024, UInt(32.W))                         // instruction memory
+      val im      = Module(new Memory(bytes = 1024))              // instruction memory
       val rf      = Module(new RegFile())                         // Registeer File
       val alu     = Module(new ALU())                             // ALU
       val bu      = Module(new BranchUnit())                      // branch unit
       val cu      = Module(new ControlUnit())                     // Control Unit
-      val mem     = Module(new Memory(bytes = 1024))                          // Data Memory
+      val mem     = Module(new Memory(bytes = 1024))              // Data Memory
 
-      loadMemoryFromFile(im, "C:/Users/Ghadyani/OneDrive/Desktop/im.bin")
+      im.io.in_adr      := pcr.io.out_pc
+      im.io.in_func     := "b011".U
+      im.io.in_w        := 0.U
+      im.io.in_d        := 0.U
+      im.io.in_wr_en    := false.B
       val inst    = Wire(UInt(32.W))
-      inst              := im.read(pcr.io.out_pc)
+      inst              := im.io.out_w
 
       cu.io.in_inst     := inst
 
