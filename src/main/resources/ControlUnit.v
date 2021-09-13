@@ -2,7 +2,7 @@ module ControlUnit(
     input   [31:0] in_inst,
     output  [17:0] out_ctrl
 );
-    always @* begin
+    always begin
         switchcase(in_inst[6:0])
             b0110111 : out_ctrl = 18'b000_0_01_10_1_01_0_0_000_0_0;     // LUI
             b0010111 : out_ctrl = 18'b000_0_01_01_1_01_0_0_000_0_0;     // AUIPC
