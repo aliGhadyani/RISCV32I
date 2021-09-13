@@ -6,7 +6,7 @@ import chisel3.util.experimental.loadMemoryFromFile
 
 class InstMem extends Module {
     val io  = IO(new Bundle{
-        val in_adr  = Input(UInt(32.W))
+        val in_adr  = Input(UInt(12.W))
         val out_inst= Output(UInt(32.W))
     })
     val init    = Seq(
