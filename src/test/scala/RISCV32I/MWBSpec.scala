@@ -4,7 +4,7 @@ import chisel3._
 import chisel3.tester._
 import org.scalatest._
 
- class MWBSpec extends FreeSpec with ChiselScalatestTester {
+/*  class MWBSpec extends FreeSpec with ChiselScalatestTester {
     "M/WB register should work properly" in {
         test(new MWB) { dut =>
             
@@ -40,4 +40,4 @@ import org.scalatest._
 
         }
     }
-} 
+}  */
