@@ -9,7 +9,7 @@ class Core extends Module {
       })
     
       val pcr     = Module(new PCR())                             // program counter
-      val im      = Module(new InstMem())              // instruction memory
+      val im      = Module(new InstMem())                         // instruction memory
       val rf      = Module(new RegFile())                         // Registeer File
       val alu     = Module(new ALU())                             // ALU
       val bu      = Module(new BranchUnit())                      // branch unit
