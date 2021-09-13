@@ -16,7 +16,7 @@ class Core extends Module {
       val cu      = Module(new ControlUnit())                     // Control Unit
       val mem     = Module(new Memory(bytes = 1024))              // Data Memory
 
-      im.io.in_adr      := pcr.io.out_pc
+      im.io.in_adr      := pcr.io.out_pc(11,0) 
       val inst    = Wire(UInt(32.W))
       inst              := im.io.out_inst
 

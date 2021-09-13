@@ -6,10 +6,10 @@ import chisel3.util.experimental.loadMemoryFromFile
 
 class InstMem extends Module {
     val io  = IO(new Bundle{
-        val in_adr  = Input(UInt(32.W))
+        val in_adr  = Input(UInt(12.W))
         val out_inst= Output(UInt(32.W))
     })
-    val mem = Mem(1024, UInt(32.W))
-    loadMemoryFromFile(mem, "C:/Users/Ghadyani/OneDrive/Desktop/im.hex")
-    io.out_inst := mem(io.in_adr)
+    val memory = Mem(1024, UInt(32.W))
+    io.out_inst := memory(io.in_adr >> 2)  
+    loadMemoryFromFile(memory, "C:/text.hex")
 }
