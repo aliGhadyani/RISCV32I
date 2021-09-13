@@ -4,7 +4,7 @@ import chisel3._
 import chisel3.tester._
 import org.scalatest._
 
- class EXMSpec extends FreeSpec with ChiselScalatestTester {
+/*  class EXMSpec extends FreeSpec with ChiselScalatestTester {
     "EX/M register should work properly" in {
         test(new EXM) { dut =>
             
@@ -57,4 +57,4 @@ import org.scalatest._
 
         }
     }
-} 
+}  */
