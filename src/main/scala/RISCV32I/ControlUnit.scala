@@ -25,7 +25,7 @@ class ControlUnit extends Module {
     */
     io.out_ctrl := "b0_0_0_0_0_0_000_00_00_0_000".U
 
-    switch(io.in_inst) {
+    switch(io.in_inst(6, 0)) {
         is("b0110111".U) {              // LUI
             io.out_ctrl := "b0_1_0_0_0_0_101_01_10_0_000".U
         }
