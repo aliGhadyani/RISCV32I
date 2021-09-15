@@ -12,6 +12,7 @@ class Core extends Module {
             val rf_adr  = Output(UInt(5.W))
             val mem_in  = Output(UInt(32.W))
             val mem_adr = Output(UInt(32.W))
+            val ctrl    = Output(UInt(17.W))
       })
       val pcr     = Module(new PCR())                             // program counter
       val im      = Module(new InstMem())                         // instruction memory
@@ -77,10 +78,10 @@ class Core extends Module {
       }
       alu.io.in_B       := 0.S
       switch(cu.io.out_ctrl(7, 6)) {
-            is(0.U) { alu.io.in_A   := rf.io.data_out2.asSInt() }
-            is(1.U) { alu.io.in_A   := imm.asSInt() }
-            is(2.U) { alu.io.in_A   := 4.S }
-            is(3.U) { alu.io.in_A   := 0.S }
+            is(0.U) { alu.io.in_B   := rf.io.data_out2.asSInt() }
+            is(1.U) { alu.io.in_B   := imm.asSInt() }
+            is(2.U) { alu.io.in_B   := 4.S }
+            is(3.U) { alu.io.in_B   := 0.S }
       }
       
       bu.io.in_enable   := cu.io.out_ctrl(12)
@@ -99,4 +100,5 @@ class Core extends Module {
       io.mem_in   := rf.io.data_out2
       io.mem_adr  := alu.io.out_res.asUInt()
       io.pc       := pcr.io.out_pc
+      io.ctrl     := cu.io.out_ctrl
 }
