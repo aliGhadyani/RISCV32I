@@ -37,11 +37,18 @@ class AXIL_SLAVE extends Module {
         val in_invalid_wr   = Input(Bool())
         val in_ack_wr       = Input(Bool())
         val out_en_wr       = Output(Bool())
-        val in_data     = Input(UInt(32.W))
+        val in_data     = Input(UInt(32.W))  //
         val out_data    = Output(UInt(32.W))
         val in_adr      = Input(UInt(32.W))
         val out_adr     = Output(UInt(32.W))
         val out_pause   = Output(Bool())
+
+        val in_invalid_rd  = Input(Bool())
+        val in_strb_rd  = Input(Bool())
+        val out_en_rd   = Output(Bool())
+        val rd_addr     = Output(UInt(32.W))
+        val in_rd_data  = Input(UInt(32.W))
+
     })
 
     val wr_state    = RegInit(0.U(2.W))
@@ -65,6 +72,7 @@ class AXIL_SLAVE extends Module {
     io.BVALID   := wr_resp_vld
     io.BRESP    := wr_resp
 
+    //Write Channel
     switch(wr_state) {
         is(0.U) {
             when(!wr_adr_rdy & !wr_data_rdy & io.AWVALID & io.WVALID) {
@@ -100,6 +108,42 @@ class AXIL_SLAVE extends Module {
             when(io.BREADY & wr_resp_vld) {
                 wr_resp_vld     := false.B
                 wr_state        := 0.U
+            }
+        }
+    }
+
+    //Read Channel
+    switch(rd_state){
+        is(0.U){
+            when(!rd_adr_rdy & io.ARVALID){
+                rd_adr_rdy    := true.B
+                io.out_en_rd  := true.B
+                io.rd_addr    := io.ARADDR
+                rd_state      := 1.U
+            }
+        }
+
+        is(1.U){
+            rd_adr_rdy := false.B
+
+            when(io.in_strb_rd & !rd_valid){
+                rd_valid      := true.B
+                rd_data       := io.in_rd_data
+                io.out_en_rd  := false.B
+                rd_state      := 2.U  
+
+                when(io.in_invalid_rd){
+                    rd_resp := 3.U
+                } .otherwise{
+                    rd_resp := 0.U
+                }               
+            }
+        }
+
+        is(2.U){
+            when(io.RREADY & rd_valid){
+                rd_valid := false.B
+                rd_state := 0.U
             }
         }
     }
