@@ -6,73 +6,102 @@ import chisel3.util._
 class AXIL_SLAVE extends Module {
     val io = IO(new Bundle{
         // write address channel
-        val AWVALID = Output(Bool())
-        val AWREADY = Input(Bool())
-        val AWADDR  = Output(UInt(32.W))
-        val AWPROT  = Output(UInt(3.W))
+        val AWVALID = Input(Bool())
+        val AWREADY = Output(Bool())
+        val AWADDR  = Input(UInt(32.W))
+        val AWPROT  = Input(UInt(3.W))
 
         // write data channel
-        val WVALID  = Output(Bool())
-        val WREADY  = Input(Bool())
-        val WDATA   = Output(UInt(32.W))
-        val WSTRB   = Output(UInt(4.W))
+        val WVALID  = Input(Bool())
+        val WREADY  = Output(Bool())
+        val WDATA   = Input(UInt(32.W))
+        val WSTRB   = Input(UInt(4.W))
 
         // write response channel
-        val BVALID  = Input(Bool())
-        val BREADY  = Output(Bool())
-        val BRESP   = Input(UInt(2.W))
+        val BVALID  = Output(Bool())
+        val BREADY  = Input(Bool())
+        val BRESP   = Output(UInt(2.W))
 
         // read address channel
-        val ARVALID = Output(Bool())
-        val ARREADY = Input(Bool())
-        val ARADDR  = Output(UInt(32.W))
-        val ARPROT  = Output(UInt(3.W))
+        val ARVALID = Input(Bool())
+        val ARREADY = Output(Bool())
+        val ARADDR  = Input(UInt(32.W))
+        val ARPROT  = Input(UInt(3.W))
 
         // read data channel
-        val RVALID  = Input(Bool())
-        val RREADY  = Output(Bool())
-        val RDATA   = Input(UInt(32.W))
-        val RRESP   = Input(UInt(2.W))
+        val RVALID  = Output(Bool())
+        val RREADY  = Input(Bool())
+        val RDATA   = Output(UInt(32.W))
+        val RRESP   = Output(UInt(2.W))
 
-        val in_M_rd = Input(Bool())
-        val in_M_wr = Input(Bool())
-        val in_data = Input(UInt(32.W))
-        val in_adr  = Input(UInt(32.W))
-        val out_pause   = Output(Bool())
+        val in_invalid_wr   = Input(Bool())
+        val in_ack_wr       = Input(Bool())
+        val out_en_wr       = Output(Bool())
+        val in_data     = Input(UInt(32.W))
         val out_data    = Output(UInt(32.W))
+        val in_adr      = Input(UInt(32.W))
+        val out_adr     = Output(UInt(32.W))
+        val out_pause   = Output(Bool())
     })
 
-    io.out_data := io.RDATA
-    io.WDATA    := io.in_data
-    io.ARADDR   := io.in_adr
-    io.AWADDR   := io.in_adr
+    val wr_state    = RegInit(0.U(2.W))
+    val rd_state    = RegInit(0.U(2.W))
 
-    when(io.in_M_rd) {
-        io.out_pause    := true.B
-        io.ARVALID      := true.B
-        io.AWVALID      := false.B
-        io.RREADY       := true.B
-        io.WVALID       := false.B
-        io.BREADY       := false.B
-        when(io.RVALID & io.ARREADY) {
-            io.out_pause    := false.B
+    val rd_data     = RegInit(0.U(32.W))
+    val rd_resp     = RegInit(0.U(2.W))
+    val rd_valid    = RegInit(false.B)
+    val rd_adr_rdy  = RegInit(false.B)
+    val wr_adr_rdy  = RegInit(false.B)
+    val wr_data_rdy = RegInit(false.B)
+    val wr_resp_vld = RegInit(false.B)
+    val wr_resp     = RegInit(0.U(2.W))
+
+    io.RDATA    := rd_data
+    io.RRESP    := rd_resp
+    io.RVALID   := rd_valid
+    io.ARREADY  := rd_adr_rdy
+    io.AWREADY  := wr_adr_rdy
+    io.WREADY   := wr_data_rdy
+    io.BVALID   := wr_resp_vld
+    io.BRESP    := wr_resp
+
+    switch(wr_state) {
+        is(0.U) {
+            when(!wr_adr_rdy & !wr_data_rdy & io.AWVALID & io.WVALID) {
+                wr_adr_rdy      := true.B
+                wr_data_rdy     := true.B
+                wr_state        := 1.U
+                io.out_en_wr    := true.B
+                io.out_data     := io.WDATA
+                io.out_adr      := io.AWADDR
+            } .otherwise {
+                wr_adr_rdy      := false.B
+                wr_data_rdy     := false.B      
+            }
         }
-    } .elsewhen(io.in_M_wr) {
-        io.out_pause    := false.B
-        io.ARVALID      := false.B
-        io.AWVALID      := true.B
-        io.RREADY       := false.B
-        io.WVALID       := true.B
-        io.BREADY       := true.B
-        when(io.WREADY & io.AWREADY & io.BVALID) {
-            io.out_pause    := false.B
+        is(1.U) {
+            wr_adr_rdy          := false.B
+            wr_data_rdy         := false.B
+
+            when(io.in_ack_wr & !wr_resp_vld) {
+                wr_resp_vld     := true.B
+                io.out_en_wr    := false.B
+                wr_state        := 2.U
+                
+                when(io.in_invalid_wr) {
+                    wr_resp     := 3.U
+                } .otherwise {
+                    wr_resp     := 0.U
+                }
+            }
+
         }
-    } .otherwise {
-        io.out_pause    := false.B
-        io.ARVALID      := false.B
-        io.AWVALID      := false.B
-        io.RREADY       := false.B
-        io.WVALID       := false.B
-        io.BREADY       := false.B
+        is(2.U) {
+            when(io.BREADY & wr_resp_vld) {
+                wr_resp_vld     := false.B
+                wr_state        := 0.U
+            }
+        }
     }
+
 }
