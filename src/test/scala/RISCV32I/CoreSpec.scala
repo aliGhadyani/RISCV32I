@@ -5,7 +5,7 @@ import chisel3.tester._
 import org.scalatest._
 import scala.util.Random
 
-class CoreSpec extends FreeSpec with ChiselScalatestTester {
+/* class CoreSpec extends FreeSpec with ChiselScalatestTester {
     "Single Cycle Core functionality" in {
         test(new Core()) { dut =>
             dut.io.start.poke(true.B)
@@ -144,4 +144,4 @@ class CoreSpec extends FreeSpec with ChiselScalatestTester {
             dut.io.rf_in.expect(60.U)
         }
     }
-}
+} */
