@@ -4,24 +4,22 @@ import chisel3._
 import chisel3.util._
 import scala.annotation.switch
 
-class Core extends Module {
+class Core(IDX: Int) extends Module {
       val io      = IO(new Bundle{
-            val start   = Input(Bool())
-            val pc      = Output(UInt(32.W))
-            val rf_in   = Output(UInt(32.W))
-            val rf_adr  = Output(UInt(5.W))
-            val mem_in  = Output(UInt(32.W))
-            val mem_adr = Output(UInt(32.W))
-            val ctrl    = Output(UInt(17.W))
+            val out_wr_en     = Output(Bool())
+            val out_rd_en     = Output(Bool())
+            val out_data      = Output(UInt(32.W))
+            val in_data       = Input(UInt(32.W))
+            val out_adr       = Output(UInt(32.W))
+            val in_pause      = Input(Bool())
+            val out_strb      = Output(UInt(4.W))
       })
-      val idx     = 0
       val pcr     = Module(new PCR())                             // program counter
-      val im      = Module(new InstMem(INST = idx))                         // instruction memory
+      val im      = Module(new InstMem(INST = IDX))                         // instruction memory
       val rf      = Module(new RegFile())                         // Registeer File
       val alu     = Module(new ALU())                             // ALU
       val bu      = Module(new BranchUnit())                      // branch unit
       val cu      = Module(new ControlUnit())                     // Control Unit
-      val mem     = Module(new Memory(bytes = 1024))              // Data Memory
 
       im.io.in_adr      := pcr.io.out_pc(11,0) 
       val inst          = Wire(UInt(32.W))
@@ -44,8 +42,8 @@ class Core extends Module {
 
       val wb_data = Wire(UInt(32.W))
       wb_data     := 0.U
-      when(cu.io.out_ctrl(16)) {
-            wb_data     := mem.io.out_w
+      when(cu.io.out_ctrl(17)) {
+            wb_data     := io.in_data
       } .otherwise {
             wb_data     := alu.io.out_res.asUInt()
       }
@@ -60,12 +58,12 @@ class Core extends Module {
             pcr.io.in_npc     := pcr.io.out_pc + 4.U
       }
 
-      pcr.io.in_pause   := false.B
+      pcr.io.in_pause   := io.in_pause
 
       rf.io.read_adr1   := inst(19, 15)
       rf.io.read_adr2   := inst(24, 20)
       rf.io.write_adr   := inst(11, 7)
-      rf.io.wr_en       := cu.io.out_ctrl(15)
+      rf.io.wr_en       := cu.io.out_ctrl(16)
       rf.io.data_in     := wb_data
 
       alu.io.in_op      := cu.io.out_ctrl(2, 0)
@@ -90,16 +88,15 @@ class Core extends Module {
       bu.io.in_A        := rf.io.data_out1.asSInt()
       bu.io.in_B        := rf.io.data_out2.asSInt()
 
-      mem.io.in_func    := inst(14, 12)
-      mem.io.in_adr     := alu.io.out_res.asUInt()
-      mem.io.in_w       := rf.io.data_out2
-      mem.io.in_d       := 0.U
-      mem.io.in_wr_en   := cu.io.out_ctrl(14)
+      io.out_strb       := "b0000".U
+      switch(inst(14, 12)) {
+            is("b000".U) { io.out_strb    := "b0001".U }
+            is("b001".U) { io.out_strb    := "b0011".U }
+            is("b010".U) { io.out_strb    := "b1111".U }
+      }
+      io.out_adr        := alu.io.out_res.asUInt()
+      io.out_data       := rf.io.data_out2
+      io.out_wr_en      := cu.io.out_ctrl(14)
+      io.out_rd_en      := cu.io.out_ctrl(15)
 
-      io.rf_adr   := inst(11, 7)
-      io.rf_in    := wb_data
-      io.mem_in   := rf.io.data_out2
-      io.mem_adr  := alu.io.out_res.asUInt()
-      io.pc       := pcr.io.out_pc
-      io.ctrl     := cu.io.out_ctrl
 }
