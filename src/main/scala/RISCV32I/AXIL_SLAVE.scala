@@ -34,21 +34,21 @@ class AXIL_SLAVE extends Module {
         val RDATA   = Output(UInt(32.W))
         val RRESP   = Output(UInt(2.W))
 
+        // unit ports
         val in_invalid_wr   = Input(Bool())
         val in_ack_wr       = Input(Bool())
         val out_en_wr       = Output(Bool())
-        val in_data     = Input(UInt(32.W))  //
-        val out_data    = Output(UInt(32.W))
-        val in_adr      = Input(UInt(32.W))
-        val out_adr     = Output(UInt(32.W))
-        val out_pause   = Output(Bool())
+        val in_data         = Input(UInt(32.W))
+        val out_data        = Output(UInt(32.W))
+        val in_adr          = Input(UInt(32.W))
+        val out_adr         = Output(UInt(32.W))
+        val out_pause       = Output(Bool())
 
-        val in_invalid_rd  = Input(Bool())
-        val in_strb_rd  = Input(Bool())
-        val out_en_rd   = Output(Bool())
-        val rd_addr     = Output(UInt(32.W))
-        val in_rd_data  = Input(UInt(32.W))
-
+        val in_invalid_rd   = Input(Bool())
+        val in_strb_rd      = Input(Bool())
+        val out_en_rd       = Output(Bool())
+        val rd_addr         = Output(UInt(32.W))
+        val in_rd_data      = Input(UInt(32.W))
     })
 
     val wr_state    = RegInit(0.U(2.W))
