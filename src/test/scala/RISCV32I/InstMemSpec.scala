@@ -66,6 +66,12 @@ class InstMemSpec extends FreeSpec with ChiselScalatestTester {
             dut.io.in_adr.poke(56.U)
             println("[test15] - running test")
             dut.io.out_inst.expect("b0000_0000_0000_0000_0000_00111_1101111".U)
+
+            /* for(i <- 0 until Program.code.length*4) {
+                dut.io.in_adr.poke(i.U)
+                printf("[test%d] - running test", i.U)
+                dut.io.out_inst.expect(Program.code(i))
+            } */
         }
     }
 }
