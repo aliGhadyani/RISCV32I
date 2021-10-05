@@ -2,7 +2,7 @@ package RISCV32I
 
 import chisel3._
 import chisel3.util._
-
+/* 
 class DataPath extends Module {
     val io = IO(new Bundle{
         val in_pause    = Input(Bool())
@@ -134,4 +134,4 @@ class DataPath extends Module {
     exm.io.in_pause     := io.in_pause
     mwb.io.in_pause     := io.in_pause
     pcr.io.in_pause     := io.in_pause
-}
+} */
