@@ -5,7 +5,7 @@ import chisel3.tester._
 import org.scalatest._
 import scala.util.Random
 
-class ALUSpec extends FreeSpec with ChiselScalatestTester {
+/* class ALUSpec extends FreeSpec with ChiselScalatestTester {
     var operand1 = Random.nextInt(200)
     var operand2 = Random.nextInt(100)
     "ALU should provide proper result regarding the operations and operands" in {
@@ -100,4 +100,4 @@ class ALUSpec extends FreeSpec with ChiselScalatestTester {
             dut.io.out_res.expect((operand1 & operand2).S(32.W))
         }
     }
-}
+} */
