@@ -4,7 +4,7 @@ import chisel3._
 import chisel3.tester._
 import org.scalatest._
 
- class RegFileSpec extends FreeSpec with ChiselScalatestTester {
+/*  class RegFileSpec extends FreeSpec with ChiselScalatestTester {
     "RegFile should provide proper result in sequence of data input and output" in {
         test(new RegFile) { dut =>
             dut.io.wr_en.poke(true.B)
@@ -54,4 +54,4 @@ import org.scalatest._
             dut.io.data_out2.expect(29.U)
         }
     }
-} 
+}  */
