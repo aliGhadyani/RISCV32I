@@ -14,8 +14,9 @@ class Core extends Module {
             val mem_adr = Output(UInt(32.W))
             val ctrl    = Output(UInt(17.W))
       })
+      val idx     = 0
       val pcr     = Module(new PCR())                             // program counter
-      val im      = Module(new InstMem())                         // instruction memory
+      val im      = Module(new InstMem(INST = idx))                         // instruction memory
       val rf      = Module(new RegFile())                         // Registeer File
       val alu     = Module(new ALU())                             // ALU
       val bu      = Module(new BranchUnit())                      // branch unit
@@ -23,7 +24,7 @@ class Core extends Module {
       val mem     = Module(new Memory(bytes = 1024))              // Data Memory
 
       im.io.in_adr      := pcr.io.out_pc(11,0) 
-      val inst    = Wire(UInt(32.W))
+      val inst          = Wire(UInt(32.W))
       inst              := im.io.out_inst
 
       cu.io.in_inst     := inst

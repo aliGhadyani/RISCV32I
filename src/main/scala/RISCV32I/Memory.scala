@@ -18,9 +18,11 @@ class Memory(LENGTH: Int, WORD_WIDTH: Int, STRB_WIDTH: Int) extends Module {
     for(i <- 0 until STRB_WIDTH) {
         in_data(i)    := io.in_data(((WORD_WIDTH/STRB_WIDTH)*(i+1))-1, (WORD_WIDTH/STRB_WIDTH)*i)
     }
+    val in_strb = Wire(Vec(STRB_WIDTH, Bool()))
+    in_strb     := io.in_strb
     val memory  = SyncReadMem(LENGTH, Vec(STRB_WIDTH, UInt((WORD_WIDTH/STRB_WIDTH).W)))
     when(io.in_wr_en) {
-        memory.write(io.in_addr_wr(WORD_WIDTH-1, 2), in_data, io.in_strb)
+        memory.write(io.in_addr_wr(WORD_WIDTH-1, 2), in_data, in_strb)
     }
     io.out_data     := memory.read(io.in_addr_rd, io.in_rd_en)
 }
